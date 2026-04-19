@@ -205,7 +205,10 @@ public class Index5 {
         String[] words = phrase.split("\\W+");
         int len = words.length;
         
-        //fix this if word is not in the hash table will crash...
+        // FIXED ---- fix this if word is not in the hash table will crash...
+        if (!index.containsKey(words[0].toLowerCase())) {
+        return "No results found for: " + words[0];
+    }
         Posting posting = index.get(words[0].toLowerCase()).pList;
         int i = 1;
         while (i < len) {
