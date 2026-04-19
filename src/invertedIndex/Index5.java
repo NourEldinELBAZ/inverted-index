@@ -205,6 +205,10 @@ public class Index5 {
         String[] words = phrase.split("\\W+");
         int len = words.length;
         
+        // fixing special character crash 
+        if (words.length == 0 || phrase.trim().isEmpty()) {
+            return "Please enter a valid search phrase.";
+        }
         // FIXED ---- fix this if word is not in the hash table will crash...
         if (!index.containsKey(words[0].toLowerCase())) {
         return "No results found for: " + words[0];
