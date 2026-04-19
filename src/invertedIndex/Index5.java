@@ -48,7 +48,11 @@ public class Index5 {
         while (p != null) {
             /// -4- **** complete here ****
             // fix get rid of the last comma
-            System.out.print("" + p.docId + "," );
+            // System.out.print("" + p.docId + "," );
+           System.out.print(p.docId); 
+           if (p.next != null) {
+            System.out.print(",");  // print comma only if its not the last node
+        }
             p = p.next;
         }
         System.out.println("]");
