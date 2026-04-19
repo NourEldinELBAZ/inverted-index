@@ -58,7 +58,42 @@ public class DictEntry {
             last = last.next;
         }
     }
+//------------------------------------------------
+
 // implement insert (int docId) method
+    void insert(int docId) {
+        // list is empty
+        if (pList == null) {
+            pList = new Posting(docId);
+            last = pList;
+            return;
+        }
+
+        // new docId is smaller than the head
+        if (docId < pList.docId) {
+            Posting newPost = new Posting(docId);
+            newPost.next = pList;
+            pList = newPost;
+            return;
+        }
+
+        // find correct position in the middle
+        Posting p = pList;
+        while (p.next != null && p.next.docId < docId) {
+            p = p.next;
+        }
+
+        // insert after p
+        Posting newPost = new Posting(docId);
+        newPost.next = p.next;
+        p.next = newPost;
+
+        // update last if inserted at the end
+        if (newPost.next == null) {
+            last = newPost;
+        }
+    }
+    
  
     DictEntry() {
         //  postingList = new HashSet<Integer>();
