@@ -48,7 +48,11 @@ public class Index5 {
         while (p != null) {
             /// -4- **** complete here ****
             // fix get rid of the last comma
-            System.out.print("" + p.docId + "," );
+            // System.out.print("" + p.docId + "," );
+           System.out.print(p.docId); 
+           if (p.next != null) {
+            System.out.print(",");  // print comma only if its not the last node
+        }
             p = p.next;
         }
         System.out.println("]");
@@ -80,6 +84,7 @@ public class Index5 {
                 while ((ln = file.readLine()) != null) {
                     /// -2- **** complete here ****
                     ///**** hint   flen +=  ________________(ln, fid);
+                    flen += indexOneLine(ln, fid);
                 }
                 sources.get(fid).length = flen;
 
@@ -163,20 +168,34 @@ public class Index5 {
         Posting answer = null;
         Posting last = null;
 //      2 while p1  != NIL and p2  != NIL
-     
+        while (pL1 != null && pL2 != null) {
 //          3 do if docID ( p 1 ) = docID ( p2 )
+            if (pL1.docId == pL2.docId) {
  
 //          4   then ADD ( answer, docID ( p1 ))
                 // answer.add(pL1.docId);
- 
+                Posting newPost = new Posting(pL1.docId);
+                if (answer == null) {
+                    answer = newPost;
+                    last = answer;
+                } else {
+                    last.next = newPost;
+                    last = last.next;
+                }
 //          5       p1 ← next ( p1 )
+                pL1 = pL1.next;
 //          6       p2 ← next ( p2 )
- 
+                pL2 = pL2.next;
+            }
  //          7   else if docID ( p1 ) < docID ( p2 )
-            
+            else if (pL1.docId < pL2.docId) {
 //          8        then p1 ← next ( p1 )
+                pL1 = pL1.next;
+            } else {
 //          9        else p2 ← next ( p2 )
- 
+                pL2 = pL2.next;
+            }
+        }
 //      10 return answer
         return answer;
     }
@@ -186,7 +205,14 @@ public class Index5 {
         String[] words = phrase.split("\\W+");
         int len = words.length;
         
-        //fix this if word is not in the hash table will crash...
+        // fixing special character crash 
+        if (words.length == 0 || phrase.trim().isEmpty()) {
+            return "Please enter a valid search phrase.";
+        }
+        // FIXED ---- fix this if word is not in the hash table will crash...
+        if (!index.containsKey(words[0].toLowerCase())) {
+        return "No results found for: " + words[0];
+    }
         Posting posting = index.get(words[0].toLowerCase()).pList;
         int i = 1;
         while (i < len) {
@@ -226,7 +252,7 @@ public class Index5 {
 
     public void store(String storageName) {
         try {
-            String pathToStorage = "/home/ehab/tmp11/rl/"+storageName;
+            String pathToStorage = "C:/Users/Nour/Desktop/IS322_HW_1/tmp11/rl/"+storageName;
             Writer wr = new FileWriter(pathToStorage);
             for (Map.Entry<Integer, SourceRecord> entry : sources.entrySet()) {
                 System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue().URL + ", Value = " + entry.getValue().title + ", Value = " + entry.getValue().text);

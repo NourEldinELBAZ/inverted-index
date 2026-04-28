@@ -19,7 +19,7 @@ public class Test {
         Index5 index = new Index5();
         //|**  change it to your collection directory 
         //|**  in windows "C:\\tmp11\\rl\\collection\\"       
-        String files = "/home/ehab/tmp11/rl/collection/";
+        String files = "C:/Users/Nour/Desktop/is322_HW_1/tmp11/rl/collection/";
 
         File file = new File(files);
         //|** String[] 	list()
@@ -36,8 +36,8 @@ public class Test {
         index.store("index");
         index.printDictionary();
 
-        String test3 = "data  should plain greatest comif"; // data  should plain greatest comif
-        System.out.println("Boo0lean Model result = \n" + index.find_24_01(test3));
+        // String test3 = "data  should plain greatest comif"; // data  should plain greatest comif
+        // System.out.println("Boo0lean Model result = \n" + index.find_24_01(test3));
 
         String phrase = "";
 
@@ -46,6 +46,10 @@ public class Test {
             BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
             phrase = in.readLine();
 /// -3- **** complete here ****
+
+            if (!phrase.isEmpty()) { 
+                System.out.println("Results:\n" + index.find_24_01(phrase));
+            }
         } while (!phrase.isEmpty());
 
     }
