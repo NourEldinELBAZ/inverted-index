@@ -81,10 +81,10 @@ public class Index5 {
                 }
                 String ln;
                 int flen = 0;
+                int position = 0;
+
                 while ((ln = file.readLine()) != null) {
-                    /// -2- **** complete here ****
-                    ///**** hint   flen +=  ________________(ln, fid);
-                    flen += indexOneLine(ln, fid);
+                    position = indexOneLine(ln, fid, position);
                 }
                 sources.get(fid).length = flen;
 
@@ -97,50 +97,45 @@ public class Index5 {
     }
 
     //----------------------------------------------------------------------------  
-    public int indexOneLine(String ln, int fid) {
-        int flen = 0;
+    public int indexOneLine(String ln, int fid, int position) {
 
-        String[] words = ln.split("\\W+");
-      //   String[] words = ln.replaceAll("(?:[^a-zA-Z0-9 -]|(?<=\\w)-(?!\\S))", " ").toLowerCase().split("\\s+");
-        flen += words.length;
-        for (int pos = 0; pos < words.length; pos++) { 
-            String word = words[pos];
-            word = word.toLowerCase();
-            if (stopWord(word)) {
-                continue;
-            }
-            word = stemWord(word);
-            // check to see if the word is not in the dictionary
-            // if not add it
-            if (!index.containsKey(word)) {
-                index.put(word, new DictEntry());
-            }
-            // add document id to the posting list
-            if (!index.get(word).postingListContains(fid)) {
-                index.get(word).doc_freq += 1; //set doc freq to the number of doc that contain the term 
-                if (index.get(word).pList == null) {
-                    index.get(word).pList = new Posting(fid);
-                    index.get(word).last = index.get(word).pList;
-                } else {
-                    index.get(word).last.next = new Posting(fid);
-                    index.get(word).last = index.get(word).last.next;
-                }
-            } else {
-                index.get(word).last.dtf += 1;
-            }
+    String[] words = ln.split("\\W+");
 
-            // store position
-            index.get(word).last.positions.add(flen - words.length + pos);
-            //set the term_fteq in the collection
-            index.get(word).term_freq += 1;
-            if (word.equalsIgnoreCase("lattice")) {
+    for (int pos = 0; pos < words.length; pos++) {
+        String word = words[pos].toLowerCase();
 
-                System.out.println("  <<" + index.get(word).getPosting(1) + ">> " + ln);
-            }
+        if (stopWord(word)) continue;
 
+        word = stemWord(word);
+
+        if (!index.containsKey(word)) {
+            index.put(word, new DictEntry());
         }
-        return flen;
+
+        if (!index.get(word).postingListContains(fid)) {
+            index.get(word).doc_freq++;
+
+            if (index.get(word).pList == null) {
+                index.get(word).pList = new Posting(fid);
+                index.get(word).last = index.get(word).pList;
+            } else {
+                index.get(word).last.next = new Posting(fid);
+                index.get(word).last = index.get(word).last.next;
+            }
+        } else {
+            index.get(word).last.dtf++;
+        }
+
+        
+        index.get(word).last.positions.add(position);
+
+        index.get(word).term_freq++;
+
+        position++; 
     }
+
+    return position;
+}
 
 //----------------------------------------------------------------------------  
     boolean stopWord(String word) {
@@ -216,7 +211,7 @@ public class Index5 {
             
             for (int pos1 : pL1.positions) {
                 for (int pos2 : pL2.positions) {
-                    if (pos2 - pos1 == gap) {
+                    if (pos2 - pos1 == 1) {
                         found = true; 
                         break;
                     }
@@ -277,27 +272,54 @@ public class Index5 {
 
     public String find_phrase(String phrase) {
         String result = "";
-        String[] words = phrase.split("\\W+");
+        String[] words = phrase.toLowerCase().split("\\W+");
 
         if (words.length == 0) return "Invalid phrase.";
-        if (!index.containsKey(words[0].toLowerCase())) 
-            return "No results for: " + words[0];
 
-        Posting posting = index.get(words[0].toLowerCase()).pList;
-
-        for (int i = 1; i < words.length; i++) {
-            if (!index.containsKey(words[i].toLowerCase()))
-                return "No results for: " + words[i];
-            // gap = 1 means words must be right next to each other
-            posting = positionalIntersect(posting, 
-                        index.get(words[i].toLowerCase()).pList, i);
+        for (String w : words) {
+            if (!index.containsKey(w)) {
+                return "No results for: " + w;
+            }
         }
 
-        while (posting != null) {
-            result += "\t" + posting.docId + " - " 
-                + sources.get(posting.docId).title + "\n";
-            posting = posting.next;
+        Posting p = index.get(words[0]).pList;
+
+        while (p != null) {
+            int docId = p.docId;
+
+            boolean matchFound = false;
+
+            for (int pos : p.positions) {
+                boolean fullMatch = true;
+
+                for (int i = 1; i < words.length; i++) {
+                    Posting nextPosting = index.get(words[i]).pList;
+
+                    while (nextPosting != null && nextPosting.docId != docId) {
+                        nextPosting = nextPosting.next;
+                    }
+
+                    if (nextPosting == null || 
+                        !nextPosting.positions.contains(pos + i)) {
+                        fullMatch = false;
+                        break;
+                    }
+                }
+
+                if (fullMatch) {
+                    matchFound = true;
+                    break;
+                }
+            }
+
+            if (matchFound) {
+                result += "\t" + docId + " - " 
+                    + sources.get(docId).title + "\n";
+            }
+
+            p = p.next;
         }
+
         return result.isEmpty() ? "No documents found." : result;
     }
 
