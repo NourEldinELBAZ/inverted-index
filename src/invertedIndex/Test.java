@@ -36,21 +36,50 @@ public class Test {
         index.store("index");
         index.printDictionary();
 
+        String phraseQuery = "Reinforcement Learning";
+System.out.println("Phrase query result:\n" + index.find_24_01(phraseQuery));
+
         // String test3 = "data  should plain greatest comif"; // data  should plain greatest comif
         // System.out.println("Boo0lean Model result = \n" + index.find_24_01(test3));
 
         String phrase = "";
 
-        do {
-            System.out.println("Print search phrase: ");
-            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-            phrase = in.readLine();
-/// -3- **** complete here ****
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
-            if (!phrase.isEmpty()) { 
-                System.out.println("Results:\n" + index.find_24_01(phrase));
+        while (true) {
+            System.out.println("\n===== Search Menu =====");
+            System.out.println("1. Boolean Search (AND)");
+            System.out.println("2. Phrase Search");
+            System.out.println("0. Exit");
+            System.out.println("=======================");
+            System.out.print("Choose an option: ");
+            
+            String choice = in.readLine();
+            
+            switch (choice) {
+                case "1":
+                    System.out.print("Enter search terms: ");
+                    phrase = in.readLine();
+                    if (phrase == null || phrase.isEmpty()) break;
+                    System.out.println("Results:\n" + index.find_24_01(phrase));
+                    break;
+                    
+                case "2":
+                    System.out.print("Enter phrase: ");
+                    phrase = in.readLine();
+                    if (phrase == null || phrase.isEmpty()) break;
+                    System.out.println("Results:\n" + index.find_phrase(phrase));
+                    break;
+                    
+                case "0":
+                    System.out.println("Goodbye!");
+                    System.exit(0);
+                    break;
+                    
+                default:
+                    System.out.println("Invalid option. Please choose 1, 2, or 0.");
             }
-        } while (!phrase.isEmpty());
+        }
 
     }
 }
