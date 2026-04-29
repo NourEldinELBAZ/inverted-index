@@ -1,10 +1,10 @@
-0,C:/Users/Nour/Desktop/is322_HW_1/tmp11/rl/collection/p1,C:/Users/Nour/Desktop/is322_HW_1/tmp11/rl/collection/p1,1435,0.0000,notext
-1,C:/Users/Nour/Desktop/is322_HW_1/tmp11/rl/collection/p2,C:/Users/Nour/Desktop/is322_HW_1/tmp11/rl/collection/p2,1401,0.0000,notext
-2,C:/Users/Nour/Desktop/is322_HW_1/tmp11/rl/collection/p3,C:/Users/Nour/Desktop/is322_HW_1/tmp11/rl/collection/p3,1936,0.0000,notext
-3,C:/Users/Nour/Desktop/is322_HW_1/tmp11/rl/collection/p4,C:/Users/Nour/Desktop/is322_HW_1/tmp11/rl/collection/p4,2014,0.0000,notext
-4,C:/Users/Nour/Desktop/is322_HW_1/tmp11/rl/collection/p5,C:/Users/Nour/Desktop/is322_HW_1/tmp11/rl/collection/p5,2099,0.0000,notext
-5,C:/Users/Nour/Desktop/is322_HW_1/tmp11/rl/collection/p6,C:/Users/Nour/Desktop/is322_HW_1/tmp11/rl/collection/p6,2233,0.0000,notext
-6,C:/Users/Nour/Desktop/is322_HW_1/tmp11/rl/collection/p7,C:/Users/Nour/Desktop/is322_HW_1/tmp11/rl/collection/p7,2221,0.0000,notext
+0,/home/ehab/tmp11/rl/collection/p1,/home/ehab/tmp11/rl/collection/p1,1435,0.0000,notext
+1,/home/ehab/tmp11/rl/collection/p2,/home/ehab/tmp11/rl/collection/p2,1401,0.0000,notext
+2,/home/ehab/tmp11/rl/collection/p3,/home/ehab/tmp11/rl/collection/p3,1936,0.0000,notext
+3,/home/ehab/tmp11/rl/collection/p4,/home/ehab/tmp11/rl/collection/p4,2014,0.0000,notext
+4,/home/ehab/tmp11/rl/collection/p5,/home/ehab/tmp11/rl/collection/p5,2099,0.0000,notext
+5,/home/ehab/tmp11/rl/collection/p6,/home/ehab/tmp11/rl/collection/p6,2233,0.0000,notext
+6,/home/ehab/tmp11/rl/collection/p7,/home/ehab/tmp11/rl/collection/p7,2221,0.0000,notext
 section2
 episodic,1,1;4,1:
 wastes,1,1;0,1:
