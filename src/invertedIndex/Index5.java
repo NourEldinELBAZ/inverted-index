@@ -103,7 +103,8 @@ public class Index5 {
         String[] words = ln.split("\\W+");
       //   String[] words = ln.replaceAll("(?:[^a-zA-Z0-9 -]|(?<=\\w)-(?!\\S))", " ").toLowerCase().split("\\s+");
         flen += words.length;
-        for (String word : words) {
+        for (int pos = 0; pos < words.length; pos++) { 
+            String word = words[pos];
             word = word.toLowerCase();
             if (stopWord(word)) {
                 continue;
@@ -127,6 +128,9 @@ public class Index5 {
             } else {
                 index.get(word).last.dtf += 1;
             }
+
+            // store position
+            index.get(word).last.positions.add(flen - words.length + pos);
             //set the term_fteq in the collection
             index.get(word).term_freq += 1;
             if (word.equalsIgnoreCase("lattice")) {
@@ -200,6 +204,49 @@ public class Index5 {
         return answer;
     }
 
+//--------------------------------------------------------------------------------
+
+   Posting positionalIntersect(Posting pL1, Posting pL2, int gap) {
+    Posting answer = null;
+    Posting last = null;
+
+    while (pL1 != null && pL2 != null) {
+        if (pL1.docId == pL2.docId) {
+            boolean found = false;  
+            
+            for (int pos1 : pL1.positions) {
+                for (int pos2 : pL2.positions) {
+                    if (pos2 - pos1 == gap) {
+                        found = true; 
+                        break;
+                    }
+                }
+                if (found) break;
+            }
+            
+            if (found) {  
+                Posting newPost = new Posting(pL1.docId);
+                if (answer == null) {
+                    answer = newPost;
+                    last = answer;
+                } else {
+                    last.next = newPost;
+                    last = last.next;
+                }
+            }
+            pL1 = pL1.next;
+            pL2 = pL2.next;
+        } else if (pL1.docId < pL2.docId) {
+            pL1 = pL1.next;
+        } else {
+            pL2 = pL2.next;
+        }
+    }
+    return answer;
+    }
+//--------------------------------------------------------------------------------
+
+
     public String find_24_01(String phrase) { // any mumber of terms non-optimized search 
         String result = "";
         String[] words = phrase.split("\\W+");
@@ -226,6 +273,34 @@ public class Index5 {
         }
         return result;
     }
+
+
+    public String find_phrase(String phrase) {
+        String result = "";
+        String[] words = phrase.split("\\W+");
+
+        if (words.length == 0) return "Invalid phrase.";
+        if (!index.containsKey(words[0].toLowerCase())) 
+            return "No results for: " + words[0];
+
+        Posting posting = index.get(words[0].toLowerCase()).pList;
+
+        for (int i = 1; i < words.length; i++) {
+            if (!index.containsKey(words[i].toLowerCase()))
+                return "No results for: " + words[i];
+            // gap = 1 means words must be right next to each other
+            posting = positionalIntersect(posting, 
+                        index.get(words[i].toLowerCase()).pList, i);
+        }
+
+        while (posting != null) {
+            result += "\t" + posting.docId + " - " 
+                + sources.get(posting.docId).title + "\n";
+            posting = posting.next;
+        }
+        return result.isEmpty() ? "No documents found." : result;
+    }
+
     
     
     //---------------------------------
