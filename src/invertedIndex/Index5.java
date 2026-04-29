@@ -127,43 +127,38 @@ public class Index5 {
      * @param position the current word position counter in the document
      * @return the updated position counter after processing this line
      */
-    public int indexOneLine(String ln, int fid, int position) {
+   public int indexOneLine(String ln, int fid, int position) {
         String[] words = ln.split("\\W+");
 
         for (int pos = 0; pos < words.length; pos++) {
             String word = words[pos].toLowerCase();
 
-            if (stopWord(word)) continue;
+            if (!stopWord(word)) {
+                word = stemWord(word);
 
-            word = stemWord(word);
-
-            if (!index.containsKey(word)) {
-                index.put(word, new DictEntry());
-            }
-
-            if (!index.get(word).postingListContains(fid)) {
-                index.get(word).doc_freq++;
-
-                if (index.get(word).pList == null) {
-                    index.get(word).pList = new Posting(fid);
-                    index.get(word).last = index.get(word).pList;
-                } else {
-                    index.get(word).last.next = new Posting(fid);
-                    index.get(word).last = index.get(word).last.next;
+                if (!index.containsKey(word)) {
+                    index.put(word, new DictEntry());
                 }
-            } else {
-                index.get(word).last.dtf++;
+
+                if (!index.get(word).postingListContains(fid)) {
+                    index.get(word).doc_freq++;
+                    if (index.get(word).pList == null) {
+                        index.get(word).pList = new Posting(fid);
+                        index.get(word).last = index.get(word).pList;
+                    } else {
+                        index.get(word).last.next = new Posting(fid);
+                        index.get(word).last = index.get(word).last.next;
+                    }
+                } else {
+                    index.get(word).last.dtf++;
+                }
+
+                index.get(word).last.positions.add(position + pos); // ← position includes all words
+                index.get(word).term_freq++;
             }
-
-            // Store the position of this word occurrence for phrase search
-            index.get(word).last.positions.add(position);
-
-            index.get(word).term_freq++;
-
-            position++;
         }
 
-        return position;
+        return position + words.length; // ← count ALL words including stop words
     }
 
     /**
@@ -442,7 +437,7 @@ public class Index5 {
      */
     public void store(String storageName) {
         try {
-            String pathToStorage = "C:/Users/إسراء/Downloads/inverted-index-main/tmp11/rl/" + storageName;
+            String pathToStorage = "C:/Users/Nour/Desktop/is322_HW_1/tmp11/rl/" + storageName;
             Writer wr = new FileWriter(pathToStorage);
             for (Map.Entry<Integer, SourceRecord> entry : sources.entrySet()) {
                 System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue().URL
@@ -517,7 +512,7 @@ public class Index5 {
      */
     public HashMap<String, DictEntry> load(String storageName) {
         try {
-            String pathToStorage = "/home/ehab/tmp11/rl/" + storageName;
+            String pathToStorage = "C:/Users/Nour/Desktop/is322_HW_1/tmp11/rl/" + storageName;
             sources = new HashMap<Integer, SourceRecord>();
             index = new HashMap<String, DictEntry>();
             BufferedReader file = new BufferedReader(new FileReader(pathToStorage));
