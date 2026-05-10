@@ -10,6 +10,11 @@
 <project name="is322_HW_1" default="default" basedir=".">
     <description>Builds, tests, and runs the project is322_HW_1.</description>
     <import file="nbproject/build-impl.xml"/>
+    <javac srcdir="src" destdir="build/classes">
+       <classpath>
+           <fileset dir="lib" includes="**/*.jar"/>
+       </classpath>
+   </javac>
     <!--
 
     There exist several targets which are by default empty and which can be 
